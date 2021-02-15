@@ -1,0 +1,56 @@
+on:
+  workflow_dispatch:
+  
+env:
+  DOCKER_USERNAME: ${{ acc.DOCKER_USERNAME }}
+  IMAGE_SECRET: ${{ acc.IMAGE_SECRET }}
+  IMAGE_NAME: ${{ acc.IMAGE_NAME }}
+  NAMESPACE: ${{ acc.NAMESPACE }}
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        username: ${{ env.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    - run: |
+        docker build . -t ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        
+  deploy-to-dev:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master    
+      
+    - uses: azure/k8s-set-context@v1
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.KUBECONFIG }}
+    
+    - run: |
+        kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+        
+    
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: ${{ env.NAMESPACE }}
+        container-registry-username: ${{ env.DOCKER_USERNAME }}
+        container-registry-password: ${{ secrets.DOCKER_PASSWORD }}
+        secret-name: ${{ env.IMAGE_SECRET }}
+    
+    - uses: azure/k8s-deploy@v1.4
+      with:
+        manifests: |
+          manifests/*.yaml
+        images: |
+          ${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        imagepullsecrets: |
+          ${{ env.IMAGE_SECRET }}
+        namespace: ${{ env.NAMESPACE }}
+                          

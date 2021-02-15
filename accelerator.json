@@ -1,0 +1,48 @@
+{
+    "name": "Node js k8s accelerator",
+    "version": "1.0.0",
+    "description": "An accelerator for node js application which deploys to kubernetes",
+    "Tags": [
+        "node",
+        "kubernetes",
+        "none"
+    ],
+    "inputs": {
+        "secrets": [
+            {
+                "name": "KUBECONFIG",
+                "description": "Kubeconfig of the target cluster"
+            },
+            {
+                "name": "DOCKER_PASSWORD",
+                "description": "Password for the docker registry"
+            }
+        ],
+        "placeHolders": [
+            {
+                "name": "DOCKER_USERNAME",
+                "description": "Docker username"
+            },
+            {
+                "name": "IMAGE_NAME",
+                "description": "Name of the image to be built and pushed"
+            },
+            {
+                "name": "IMAGE_SECRET",
+                "description": "Name of image pull secret"
+            },
+            {
+                "name": "NAMESPACE",
+                "description": "Kubernetes namespace"
+            }
+        ]
+    },
+    "settings": [
+        {
+            "name": "vulnerability_alerts",
+            "value": "enabled"
+        }
+    ],
+    "startupWorkflows": [
+    ]
+}
