@@ -2,10 +2,10 @@ on:
   workflow_dispatch:
   
 env:
-  DOCKER_USERNAME: ${{ acc.DOCKER_USERNAME }}
-  IMAGE_SECRET: ${{ acc.IMAGE_SECRET }}
-  IMAGE_NAME: ${{ acc.IMAGE_NAME }}
-  NAMESPACE: ${{ acc.NAMESPACE }}
+  DOCKER_USERNAME: shivamg202
+  IMAGE_SECRET: demoimagesecret
+  IMAGE_NAME: demoimage
+  NAMESPACE: demons
     
 jobs:
   build:

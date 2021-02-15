@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ${{ acc.IMAGE_NAME }}
+  name: demoimage
   annotations:
     fluxcd.io/automated: "true"
     fluxcd.io/tag.demo-app: semver:~1.0
@@ -9,15 +9,15 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: ${{ acc.IMAGE_NAME }}
+      app: demoimage
   template:
     metadata:
       labels:
-        app: ${{ acc.IMAGE_NAME }}
+        app: demoimage
     spec:
       containers:
-      - name: ${{ acc.IMAGE_NAME }}
-        image: ${{ acc.DOCKER_USERNAME }}/${{ acc.IMAGE_NAME }}
+      - name: demoimage
+        image: shivamg202/demoimage
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
